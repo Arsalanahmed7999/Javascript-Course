@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My user app</title>
+  </head>
+  <body>
+    <h1>Hello I am a user</h1>
+    <input type="text" id="addUser" placeholder="Add a user" />
+    <button class="btnAdd" onclick="handleAddUser()">Add</button>
+    <ul id="list"></ul>
+  </body>
+  <script>
+    const API_Students = "http://localhost:3000/students";
+    let all_users = [];
+    async function getAllUsers() {
+      try {
+        const res = await fetch(API_Students);
+        all_users = await res.json();
+        displayUsers(all_users);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    function displayUsers(users) {
+      let list = document.querySelector("#list");
+      list.innerHTML = users.map(
+        (user) =>
+          `
+            <li>${user.username}
+                <button onClick=handleEdit('${user.id}')>Edit</button>
+                <button onClick=handleDelete('${user.id}')>Delete</button>
+            </li> 
+
+            `,
+      );
+    }
+
+    const handleAddUser = async () => {
+      let newUser = document.querySelector("#addUser");
+      let username = newUser.value;
+      await fetch(API_Students, {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+        body: JSON.stringify({ username }),
+      });
+      getAllUsers();
+    };
+
+    const handleEdit = async (id, oldName) => {
+      let username = prompt("Enter your name", oldName);
+      await fetch(`${API_Students}/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+        body: JSON.stringify({ username }),
+      });
+      getAllUsers();
+    };
+
+    const handleDelete = async (id) => {
+      await fetch(`${API_Students}/${id}`, {
+        method: "DELETE"
+      });
+      getAllUsers();
+    };
+    getAllUsers();
+  </script>
+</html>

@@ -1,0 +1,9 @@
+{
+  "students": [
+    {
+      "username": "arham",
+      "id": "JQUldP5PQWs"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
